@@ -1,0 +1,13 @@
+---
+title: "p8105_hw6_tj2383"
+author: "Tanvi Jain"
+date: "11/16/2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+##Problem 1
