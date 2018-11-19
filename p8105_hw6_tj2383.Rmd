@@ -21,12 +21,24 @@ homicide_data = read.csv("./data/homicide-data.csv")
 
 In this code chunk I create a `city_state` variable by combining the `city` and `state` variables and a binary variable indicating whether the homicide is solved. I omitted the cities Dallas, TX; Phoenix, AZ; and Kansas City, MO – these don’t report victim race. I also omitted Tulsa, AL – this is a data entry mistake. Next I modifiy `victim_race` to have categories white and non-white, with white as the reference category. Be sure that victim_age is numeric.
 ```{r}
-homicide_data_combined = 
+homicide_data_clean = 
   homicide_data %>% 
   mutate(city_state = paste(city, state, sep = ", ")) %>% 
   select(-city, -state) %>% 
-  mutate(case_resolution = disposition == "Closed by arrest")
-
+  mutate(case_resolution = disposition == "Closed by arrest") %>% 
+  filter(city_state != "Dallas, TX" & city_state != "Phoenix, AZ" & city_state != "Kansas City, MO" & city_state != "Tulsa, AL") %>% 
+  
+  mutate(binary_race = case_when(
+    victim_race == "Asian" ~ "non-white",
+    victim_race == "Black" ~ "non-white",
+    victim_race == "Hispanic" ~ "non-white",
+    victim_race == "Other" ~ "non-white",
+    victim_race == "Unknown" ~ "non-white",
+    victim_race == "White" ~ "white"),
+    
+    victim_race = factor(binary_race, levels = c("White", "Non-White")),
+    victim_age = as.numeric(as.character(victim_age))
+  )
 ```
 
 
