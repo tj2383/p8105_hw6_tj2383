@@ -8,6 +8,13 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+set.seed(1)
 ```
 
 ##Problem 1
+
+Importing the homicide dataset
+```{r}
+homicide_data = read.csv("./data/homicide-data.csv")
+```
+
