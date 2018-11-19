@@ -57,4 +57,11 @@ fit_logistic_baltimore %>%
          upper_95_limit = exp(estimate + (1.96 * std_error))) %>%
   filter(term == "victim_racenon-white")
 ```
-The odds of having a solved case among those who identify as non-white is 0.44 times the odds of having a solved case among those who identify as white and we are 95% confident that these odds are between 0.31 and 0.62
+The odds of having a solved case among those who identify as non-white is 0.44 times the odds of having a solved case among those who identify as white and we are 95% confident that these odds are between 0.31 and 0.62 adjusting for sex and age.
+
+
+
+
+
+
+
