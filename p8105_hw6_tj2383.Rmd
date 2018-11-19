@@ -42,11 +42,19 @@ homicide_data_clean =
 ```
 
 
-In this code chunk I use the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race (as just defined) as predictors for Baltimore, MD. I then saved the output of glm as an R object; applied the broom::tidy to this object; and obtained the estimate and confidence interval of the adjusted odds ratio for solving homicides comparing black victims to white victims, keeping all other variables fixed.
+In this code chunk I use the glm function to fit a logistic regression with `case_resolution` as the outcome and `victim age`, `sex`, and `race` as predictors for Baltimore, MD. I then saved the output of glm as an R object; applied the broom::tidy to this object; and obtained the estimate and confidence interval of the adjusted odds ratio for solving homicides comparing black victims to white victims, keeping all other variables fixed.
 ```{r}
 fit_logistic_baltimore = 
   homicide_data_clean %>% 
   filter(city_state == "Baltimore, MD") %>% 
   glm(case_resolution ~ victim_age + victim_race + victim_sex, data = ., family = binomial()) 
 
+fit_logistic_baltimore %>% 
+  broom::tidy() %>% 
+  janitor::clean_names() %>% 
+  mutate(OR = exp(estimate),
+         lower_95_limit = exp(estimate - (1.96 * std_error)),
+         upper_95_limit = exp(estimate + (1.96 * std_error))) %>%
+  filter(term == "victim_racenon-white")
 ```
+The odds of having a solved case among those who identify as non-white is 0.44 times the odds of having a solved case among those who identify as white and we are 95% confident that these odds are between 0.31 and 0.62
