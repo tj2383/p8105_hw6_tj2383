@@ -60,8 +60,26 @@ fit_logistic_baltimore %>%
 The odds of having a solved case among those who identify as non-white is 0.44 times the odds of having a solved case among those who identify as white and we are 95% confident that these odds are between 0.31 and 0.62 adjusting for sex and age.
 
 
+In this code chunk I ran glm for each of the cities in the dataset, and extracted the adjusted odds ratio and 95% CI for solving homicides comparing black victims to white victims. I did this within a “tidy” pipeline, making use of purrr::map, list columns, and unnest to create a dataframe with estimated ORs and CIs for each city.
+```{r}
+nested_glm =
+  homicide_data_clean %>% 
+  group_by(city_state) %>% 
+  nest() %>% 
+  mutate(regression_city_state = map(data, ~lm(case_resolution ~ victim_age + victim_sex + victim_race, data = .x)),
+         regression_city_state = map(regression_city_state, broom::tidy)) %>% 
+  select(-data)
 
+homicides = nested_glm %>% 
+  unnest() %>% 
+  janitor::clean_names() %>% 
+  mutate(OR = exp(estimate),
+         lower_95_limit = exp(estimate - (1.96 * std_error)),
+         upper_95_limit = exp(estimate + (1.96 * std_error))
+  ) %>% 
+  filter(term == "victim_racenon-white") %>%
+  select(city_state, OR, lower_95_limit, upper_95_limit)
 
-
-
-
+homicides %>% 
+  knitr::kable()
+```
