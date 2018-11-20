@@ -85,7 +85,20 @@ This is a dataframe consisting of the estimated ORs and CIs for each city.
 `r homicides %>% knitr::kable()`
 
 
+In this code chunk I created a plot that shows the estimated ORs and CIs for each city. I organized cities according to estimated OR.
 ```{r}
-
+homicides %>% 
+  mutate(city_state = forcats::fct_inorder(city_state)) %>% 
+  ggplot(aes(x = city_state, y = OR)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower_95_limit, ymax = upper_95_limit)) +
+  labs(
+    x = "city, state",
+    y = "ORs",
+    title = "ORs and 95% CIs for solved cases comparing non-whites to whites"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) 
 ```
 
+According to this scatter plot, majority of the ORs appear to be below 1 with the exception of Birmingham, AL, Durham, NC, and Tampa, FL, indicating that majority of the cities have decreased odds of a case being solved for non-white people compared to white people, except for the three cities with a greater than 1 odds ratio. However, the null value of 1 falls in the 95% CIs for these three cities indicating that their ORs aren't significant.
