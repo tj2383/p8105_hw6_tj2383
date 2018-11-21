@@ -189,7 +189,10 @@ cv_birthweight =
   mutate(rmse_fit_linear_birthweight = map2_dbl(fit_linear_birthweight, test, ~rmse(model = .x, data = .y)),
          rmse_1 = map2_dbl(model_1, test, ~rmse(model = .x, data = .y)),
          rmse_2 = map2_dbl(model_2, test, ~rmse(model = .x, data = .y)))
+```
 
+The following is a plot of the 3 models comparison
+```{r}
 cv_birthweight %>% 
   select(starts_with("rmse")) %>% 
   gather(key = model, value = rmse) %>% 
