@@ -8,6 +8,8 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(mgcv)
+library(modelr)
 set.seed(1)
 ```
 
@@ -140,6 +142,42 @@ birthweight_data =
       mrace == 8 ~ "other"),
     mrace == fct_relevel(mrace, "white")
   )
-
 ```
 This dataset contains no missing values.
+
+
+In this code chunk I created a linear regression model for birthweight.
+```{r}
+fit_linear_birthweight = 
+  birthweight_data %>% 
+  lm(bwt ~ momage + babysex + fincome + gaweeks + malform + mrace, data = .)
+```
+This model is based on my hypothesis for key maternal sociodemographic and biologic indicators that influence infant birthweight. This model is testing the association between mother's age at delivery on baby's birthweight adjusting for family income, baby's sex, gestational age, presence of malformations, and mother's race.
+
+
+The following is a plot of model residuals against fitted values. 
+```{r}
+modelr::add_residuals(birthweight_data, fit_linear_birthweight) 
+modelr::add_predictions(birthweight_data, fit_linear_birthweight)
+
+birthweight_data %>% 
+  modelr::add_residuals(fit_linear_birthweight) %>% 
+  modelr::add_predictions(fit_linear_birthweight) %>% 
+  ggplot(aes(x = pred, y = resid)) + geom_point() +
+  theme_bw()
+```
+
+
+In this code chunk I compared my model to two other models.
+```{r}
+model_1 =
+  birthweight_data %>% 
+  lm(bwt ~ blength + gaweeks, data = .)
+
+model_2 = 
+  birthweight_data %>% 
+  lm(bwt ~ bhead + blength + babysex + bhead*blength + bhead*babysex + blength+babysex + bhead*blength*babysex, data = .)
+
+```
+
+
